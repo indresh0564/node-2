@@ -5,25 +5,29 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false
-  });
+  }); 
 };
 
 exports.postAddProduct = (req, res, next) => {
+  console.log("inside postaddProduct");
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  Product.create({
+
+  req.costomer
+  .createProduct({
     title:title,
     price:price,
     imageUrl:imageUrl,
-    description:description
+    description:description,
   })
   .then(result=>{
-    console.log(result);
+    // console.log(result);
     return res.redirect('/');
   })
   .catch(err=>{
+    console.log("admin creatProduct");
     console.log(err);
   });
 };
