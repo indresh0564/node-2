@@ -18,6 +18,9 @@ const sequelize = require('./util/database');
 
 const Product = require('./models/product');
 const costomer = require('./models/User');
+const Cart = require('./models/cart');
+const Cart_item = require('./models/cart-item');
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -41,12 +44,16 @@ app.use(errorController.get404);
 
 Product.belongsTo(costomer, {constraints: true, onDelete:'CASCADE'});
 costomer.hasMany(Product);
+costomer.hasOne(Cart);
+Cart.belongsTo(costomer);
+Cart.belongsToMany(Product, { through : Cart_item } );
+Product.belongsToMany(Cart, { through : Cart_item } );
 
 sequelize
 // .sync({forse:true})
 .sync()
 .then((result)=>{
-    console.log(result);
+    // console.log(result);
     return costomer.findByPk(1);
 })
 .then((co)=>{
@@ -56,7 +63,10 @@ sequelize
     return co;
 })
 .then((costomer)=>{
-// console.log(costomer);
+    // app.listen(3000);
+    return costomer.createCart();
+})
+.then((costomer)=>{
     app.listen(3000);
 })
 .catch(err=>console.log(err));
